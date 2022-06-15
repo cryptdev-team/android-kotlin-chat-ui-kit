@@ -48,7 +48,7 @@ import com.cometchat.pro.uikit.ui_settings.enum.ConversationMode
 * Modified on  - 23rd March 2020
 
 */
-class CometChatConversationList : Fragment(), TextWatcher {
+open class CometChatConversationList : Fragment(), TextWatcher {
     private var rvConversation //Uses to display list of conversations.
             : CometChatConversation? = null
     private var conversationsRequest //Uses to fetch Conversations.

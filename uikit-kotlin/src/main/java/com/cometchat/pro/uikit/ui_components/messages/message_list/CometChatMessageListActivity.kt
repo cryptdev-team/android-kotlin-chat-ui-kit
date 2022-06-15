@@ -34,7 +34,7 @@ import com.cometchat.pro.uikit.ui_settings.UIKitSettings
  * @see CometChatConstants
  * @see CometChatMessageList
  */
-class CometChatMessageListActivity : AppCompatActivity(), MessageAdapter.OnMessageLongClick {
+open class CometChatMessageListActivity : AppCompatActivity(), MessageAdapter.OnMessageLongClick {
     private val messageLongClick: OnMessageLongClick? = null
     var fragment: Fragment? = CometChatMessageList()
     override fun onCreate(savedInstanceState: Bundle?) {
