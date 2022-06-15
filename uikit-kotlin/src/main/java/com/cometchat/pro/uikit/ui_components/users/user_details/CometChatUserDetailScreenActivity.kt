@@ -20,6 +20,7 @@ import com.cometchat.pro.core.MessagesRequest.MessagesRequestBuilder
 import com.cometchat.pro.exceptions.CometChatException
 import com.cometchat.pro.models.*
 import com.cometchat.pro.uikit.R
+import com.cometchat.pro.uikit.ui_components.calls.call_manager.listener.CometChatCallListener
 import com.cometchat.pro.uikit.ui_components.messages.extensions.collaborative.CometChatCollaborativeActivity
 import com.cometchat.pro.uikit.ui_components.shared.cometchatSharedMedia.CometChatSharedMedia
 import com.cometchat.pro.uikit.ui_components.messages.message_list.CometChatMessageListActivity
@@ -34,8 +35,8 @@ import com.google.android.material.appbar.MaterialToolbar
 import java.util.*
 
 class CometChatUserDetailScreenActivity constructor() : AppCompatActivity() {
-    private var tvViewProfile: TextView?= null
-    private var tvAction: TextView?= null
+    private var tvViewProfile: TextView? = null
+    private var tvAction: TextView? = null
     private var userAvatar: CometChatAvatar? = null
     private var userStatus: TextView? = null
     private var userName: TextView? = null
@@ -55,7 +56,8 @@ class CometChatUserDetailScreenActivity constructor() : AppCompatActivity() {
     private var toolbar: MaterialToolbar? = null
     private var isBlocked: Boolean = false
     private var fontUtils: FontUtils? = null
-//    private var callBtn: ImageView? = null
+
+    //    private var callBtn: ImageView? = null
 //    private var vidoeCallBtn: ImageView? = null
     private var historyView: LinearLayout? = null
     private var historyRv: RecyclerView? = null
@@ -108,7 +110,7 @@ class CometChatUserDetailScreenActivity constructor() : AppCompatActivity() {
 
         if (!FeatureRestriction.isSharedMediaEnabled()) sharedMediaLayout?.visibility = View.GONE
         checkDarkMode()
-        Log.e(TAG, "initComponent: "+link.toString() )
+        Log.e(TAG, "initComponent: " + link.toString())
         if (FeatureRestriction.isViewProfileEnabled()) {
             if (link == null) {
                 tvAction?.visibility = View.GONE
@@ -154,7 +156,7 @@ class CometChatUserDetailScreenActivity constructor() : AppCompatActivity() {
 //            }
 //        })
 
-        FeatureRestriction.isBlockUserEnabled(object : FeatureRestriction.OnSuccessListener{
+        FeatureRestriction.isBlockUserEnabled(object : FeatureRestriction.OnSuccessListener {
             override fun onSuccess(p0: Boolean) {
                 if (!p0)
                     blockUserLayout?.visibility = View.GONE
@@ -257,7 +259,11 @@ class CometChatUserDetailScreenActivity constructor() : AppCompatActivity() {
         }
         if (intent.hasExtra(UIKitConstants.IntentStrings.STATUS)) {
             val status: String? = intent.getStringExtra(UIKitConstants.IntentStrings.STATUS)
-            if (status != null && (status == CometChatConstants.USER_STATUS_ONLINE)) userStatus!!.setTextColor(resources.getColor(R.color.colorPrimary))
+            if (status != null && (status == CometChatConstants.USER_STATUS_ONLINE)) userStatus!!.setTextColor(
+                resources.getColor(
+                    R.color.colorPrimary
+                )
+            )
             userStatus!!.text = status
         }
         if (intent.hasExtra(UIKitConstants.IntentStrings.LINK)) {
@@ -277,7 +283,9 @@ class CometChatUserDetailScreenActivity constructor() : AppCompatActivity() {
 
     private fun fetchCallHistory() {
         if (messageRequest == null) {
-            messageRequest = MessagesRequestBuilder().setUID((uid)!!).setCategories(listOf(CometChatConstants.CATEGORY_CALL)).setLimit(30).build()
+            messageRequest =
+                MessagesRequestBuilder().setUID((uid)!!).setCategories(listOf(CometChatConstants.CATEGORY_CALL)).setLimit(30)
+                    .build()
         }
         messageRequest!!.fetchPrevious(object : CallbackListener<List<BaseMessage>>() {
             public override fun onSuccess(messageList: List<BaseMessage>) {
@@ -328,9 +336,9 @@ class CometChatUserDetailScreenActivity constructor() : AppCompatActivity() {
         CometChat.addMembersToGroup((guid)!!, userList, null, object : CallbackListener<HashMap<String?, String?>?>() {
             public override fun onSuccess(stringStringHashMap: HashMap<String?, String?>?) {
                 Log.e(TAG, "onSuccess: " + uid + "Group" + guid)
-                if (tvBlockUser != null) 
+                if (tvBlockUser != null)
 //                    ErrorMessagesUtils.showCometChatErrorDialog(this@CometChatUserDetailScreenActivity, String.format(resources.getString(R.string.user_added_to_group), userName!!.text.toString(), groupName), UIKitConstants.ErrorTypes.SUCCESS)
-                addBtn!!.text = String.format(resources.getString(R.string.remove_from_group), groupName)
+                    addBtn!!.text = String.format(resources.getString(R.string.remove_from_group), groupName)
                 isAlreadyAdded = true
             }
 
@@ -345,7 +353,7 @@ class CometChatUserDetailScreenActivity constructor() : AppCompatActivity() {
             public override fun onSuccess(s: String?) {
                 if (tvBlockUser != null)
 //                    ErrorMessagesUtils.showCometChatErrorDialog(this@CometChatUserDetailScreenActivity, String.format(resources.getString(R.string.user_removed_from_group), userName!!.text.toString(), groupName), UIKitConstants.ErrorTypes.SUCCESS)
-                addBtn?.text = String.format(resources.getString(R.string.add_in), groupName)
+                    addBtn?.text = String.format(resources.getString(R.string.add_in), groupName)
                 addBtn?.visibility = View.VISIBLE
                 tvAction?.visibility = View.VISIBLE
                 isAlreadyAdded = false
@@ -365,7 +373,7 @@ class CometChatUserDetailScreenActivity constructor() : AppCompatActivity() {
             public override fun onSuccess(stringStringHashMap: HashMap<String?, String?>?) {
                 if (tvBlockUser != null)
 //                    ErrorMessagesUtils.showCometChatErrorDialog(this@CometChatUserDetailScreenActivity, String.format(resources.getString(R.string.unblocked_successfully), userName!!.text.toString()),UIKitConstants.ErrorTypes.SUCCESS)
-                isBlocked = false
+                    isBlocked = false
                 setBlockUnblock()
             }
 
@@ -383,7 +391,7 @@ class CometChatUserDetailScreenActivity constructor() : AppCompatActivity() {
             public override fun onSuccess(stringStringHashMap: HashMap<String?, String?>?) {
                 if (tvBlockUser != null)
 //                    ErrorMessagesUtils.showCometChatErrorDialog(this@CometChatUserDetailScreenActivity, String.format(resources.getString(R.string.user_is_blocked), userName?.text.toString()),UIKitConstants.ErrorTypes.SUCCESS)
-                isBlocked = true
+                    isBlocked = true
                 setBlockUnblock()
             }
 
@@ -398,6 +406,21 @@ class CometChatUserDetailScreenActivity constructor() : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         groupListener()
+        //Edited By CryptoDev:Add Call Listener To Listen To Calls
+        addCometChatCometListener()
+    }
+
+    //Edited By CryptoDev:Add Call Listener To Listen To Calls
+    private fun addCometChatCometListener() {
+        if (CometChat.getLoggedInUser() != null) {
+            CometChatCallListener.addCallListener(this::class.java.simpleName, this)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        //Edited By CryptoDev:Remove Call listener
+        CometChatCallListener.removeCallListener(this::class.java.simpleName)
     }
 
     override fun onStop() {

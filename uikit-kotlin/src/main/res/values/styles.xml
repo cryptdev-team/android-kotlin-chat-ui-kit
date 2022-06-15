@@ -6,7 +6,8 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:windowIsTranslucent">true</item>
+        <!--        Edited By CryptoDev: it casus app to crash on android Oreo because it conflicts with screenOrientation-->
+        <!--        <item name="android:windowIsTranslucent">true</item>-->
         <item name="android:windowAnimationStyle">@android:style/Animation</item>
         <item name="android:statusBarColor">@color/colorPrimary</item>
     </style>
@@ -18,7 +19,7 @@
         <item name="android:windowIsFloating">false</item>
         <item name="android:background">#fff</item>
     </style>
-      
+
     <style name="DialogAnimation">
         <item name="android:windowEnterAnimation">@anim/animate_slides_down</item>
         <item name="android:windowExitAnimation">@anim/animate_slides_up</item>

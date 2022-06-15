@@ -8,7 +8,7 @@ import android.view.WindowManager
 
 object UiKitViewExtensions {
     /**
-     * edited by me
+     * Edited By CryptoDev:
      * call this function in activities after calling setContentView(view) to make this activity able to turn screen on
     when launched if the mobile screen is off (in lock status) don't forget to add android:showWhenLocked="true" and
     android:turnScreenOn="true" in manifest file

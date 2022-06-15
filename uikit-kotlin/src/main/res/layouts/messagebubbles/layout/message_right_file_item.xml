@@ -36,12 +36,10 @@
                     android:singleLine="true"
                     android:maxLength="15"
                     android:ellipsize="end"
-                    android:focusable="true"
                     android:paddingTop="3dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
                     android:maxWidth="250dp"
-                    android:focusableInTouchMode="true"
                     style="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
                     android:layout_height="wrap_content" />
                 <TextView
@@ -51,9 +49,7 @@
                     tools:text="File Size"
                     android:textColor="@color/textColorWhite"
                     android:layout_marginStart="10dp"
-                    android:focusable="true"
                     android:layout_below="@+id/tvFileName"
-                    android:focusableInTouchMode="true"
                     android:layout_height="wrap_content" />
                 <LinearLayout
                     android:background="@drawable/cc_rounded_date_button"

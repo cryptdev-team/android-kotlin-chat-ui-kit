@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -17,8 +18,10 @@ import com.cometchat.pro.core.CometChat.CallbackListener
 import com.cometchat.pro.exceptions.CometChatException
 import com.cometchat.pro.uikit.ui_components.shared.cometchatAvatar.CometChatAvatar
 import com.cometchat.pro.uikit.R
+import com.cometchat.pro.uikit.UiKitViewExtensions.turnOnScreenIfLocked
 import com.cometchat.pro.uikit.ui_components.calls.call_manager.helper.CometChatAudioHelper
 import com.cometchat.pro.uikit.ui_components.calls.call_manager.helper.OutgoingAudioHelper
+import com.cometchat.pro.uikit.ui_components.calls.call_manager.listener.CometChatCallListener
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -70,6 +73,7 @@ class CometChatCallActivity : AppCompatActivity(), View.OnClickListener {
         callActivity = this
         handleIntent()
         setContentView(R.layout.activity_cometchat_callmanager)
+        turnOnScreenIfLocked() //Edited By CryptoDev: To Turn Screen On , On Incoming Calls
         handleIntent()
         initView()
         setValues()
@@ -135,8 +139,19 @@ class CometChatCallActivity : AppCompatActivity(), View.OnClickListener {
             notification = Uri.parse("android.resource://" + packageName + "/" + R.raw.incoming_call)
         }
         setCallType(isVideo, isIncoming)
-        if (!Utils.hasPermissions(this, Manifest.permission.RECORD_AUDIO) && !Utils.hasPermissions(this, Manifest.permission.CAMERA)) {
-            requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA), REQUEST_PERMISSION)
+        /*Edited By CryptoDev: Separate Permission Asking , So That if the user Accepted one Permission
+          and not the other the system shows the not accepted permission */
+        if (!Utils.hasPermissions(this, Manifest.permission.RECORD_AUDIO) &&
+            !Utils.hasPermissions(this, Manifest.permission.CAMERA)
+        ) {
+            requestPermissions(
+                arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA),
+                REQUEST_PERMISSION_AUDIO_CAMERA
+            )
+        } else if (!Utils.hasPermissions(this, Manifest.permission.RECORD_AUDIO)) {
+            requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), REQUEST_PERMISSION_AUDIO)
+        } else if (!Utils.hasPermissions(this, Manifest.permission.CAMERA)) {
+            requestPermissions(arrayOf(Manifest.permission.CAMERA), REQUEST_PERMISSION_CAMERA)
         }
     }
 
@@ -171,10 +186,20 @@ class CometChatCallActivity : AppCompatActivity(), View.OnClickListener {
             outgoingCallView!!.visibility = View.GONE
             if (isVideoCall) {
                 callMessage!!.text = resources.getString(R.string.incoming_video_call)
-                callMessage!!.setCompoundDrawablesWithIntrinsicBounds(resources.getDrawable(R.drawable.ic_videocam_white_24dp), null, null, null)
+                callMessage!!.setCompoundDrawablesWithIntrinsicBounds(
+                    resources.getDrawable(R.drawable.ic_videocam_white_24dp),
+                    null,
+                    null,
+                    null
+                )
             } else {
                 callMessage!!.text = resources.getString(R.string.incoming_audio_call)
-                callMessage!!.setCompoundDrawablesWithIntrinsicBounds(resources.getDrawable(R.drawable.ic_call_incoming_24dp), null, null, null)
+                callMessage!!.setCompoundDrawablesWithIntrinsicBounds(
+                    resources.getDrawable(R.drawable.ic_call_incoming_24dp),
+                    null,
+                    null,
+                    null
+                )
             }
         } else {
             callTv!!.text = getString(R.string.calling)
@@ -285,6 +310,21 @@ class CometChatCallActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
+        //Edited By CryptoDev:Add Call Listener To Listen To Calls
+        addCometChatCometListener()
+    }
+
+    //Edited By CryptoDev:Add Call Listener To Listen To Calls
+    private fun addCometChatCometListener() {
+        if (CometChat.getLoggedInUser() != null) {
+            CometChatCallListener.addCallListener(this::class.java.simpleName, this)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        //Edited By CryptoDev:Remove Call Listener
+        CometChatCallListener.removeCallListener(this::class.java.simpleName)
     }
 
     override fun onStop() {
@@ -297,7 +337,10 @@ class CometChatCallActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     companion object {
-        private const val REQUEST_PERMISSION = 1
+        //        Edited By CryptoDev: Permissions request code
+        private const val REQUEST_PERMISSION_AUDIO_CAMERA = 10
+        private const val REQUEST_PERMISSION_AUDIO = 11
+        private const val REQUEST_PERMISSION_CAMERA = 12
         var mainView: RelativeLayout? = null
         var cometChatAudioHelper: CometChatAudioHelper? = null
 

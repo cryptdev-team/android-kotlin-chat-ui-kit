@@ -1,9 +1,6 @@
 package com.cometchat.pro.uikit.ui_resources.utils
 
-import android.app.Activity
-import android.app.Dialog
-import android.app.Notification
-import android.app.PendingIntent
+import android.app.*
 import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
@@ -76,7 +73,7 @@ import java.util.regex.Pattern
 import kotlin.math.roundToInt
 
 public class Utils {
-    companion object{
+    companion object {
         private const val TAG = "Utils"
 
         fun removeEmojiAndSymbol(content: String): String? {
@@ -88,17 +85,20 @@ public class Utils {
                 e.printStackTrace()
             }
             val unicodeOutliers = Pattern.compile(
-                    "[\ud83c\udc00-\ud83c\udfff]|[\ud83d\udc00-\ud83d\udfff]|[\u2600-\u27ff]",
-                    Pattern.UNICODE_CASE or
-                            Pattern.CASE_INSENSITIVE)
+                "[\ud83c\udc00-\ud83c\udfff]|[\ud83d\udc00-\ud83d\udfff]|[\u2600-\u27ff]",
+                Pattern.UNICODE_CASE or
+                        Pattern.CASE_INSENSITIVE
+            )
             val unicodeOutlierMatcher = unicodeOutliers.matcher(utf8tweet)
             utf8tweet = unicodeOutlierMatcher.replaceAll(" ")
             return utf8tweet
         }
 
+        //        Edited By CryptoDev: Always Return False Because The App Doesn't Support Dark Mode
         fun isDarkMode(context: Context): Boolean {
-            val nightMode = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-            return nightMode == Configuration.UI_MODE_NIGHT_YES
+            /*val nightMode = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+            return nightMode == Configuration.UI_MODE_NIGHT_YES*/
+            return false
         }
 
         fun softTransition(`$this$softTransition`: Float, compareWith: Float, allowedDiff: Float, scaleFactor: Float): Float {
@@ -109,7 +109,8 @@ public class Utils {
                 val diff: Float
                 if (compareWith > `$this$softTransition`) {
                     if (compareWith / `$this$softTransition` > allowedDiff) {
-                        diff = `$this$softTransition`.coerceAtLeast(compareWith) - `$this$softTransition`.coerceAtMost(compareWith)
+                        diff =
+                            `$this$softTransition`.coerceAtLeast(compareWith) - `$this$softTransition`.coerceAtMost(compareWith)
                         result = `$this$softTransition` + diff / scaleFactor
                     }
                 } else if (`$this$softTransition` > compareWith && `$this$softTransition` / compareWith > allowedDiff) {
@@ -145,7 +146,11 @@ public class Utils {
 
                 override fun onError(e: CometChatException) {
                     Log.e(TAG, "onError: " + e.message)
-                    Snackbar.make((context as Activity).window.decorView.rootView, context.getResources().getString(R.string.call_initiate_error) + ":" + e.message, Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(
+                        (context as Activity).window.decorView.rootView,
+                        context.getResources().getString(R.string.call_initiate_error) + ":" + e.message,
+                        Snackbar.LENGTH_LONG
+                    ).show()
                 }
             })
         }
@@ -154,7 +159,12 @@ public class Utils {
             val var2 = var0 / 1000L
             val var4 = var2 / 60L % 60L
             val var6 = var2 / 60L / 60L % 24L
-            return if (var6 == 0L) String.format(Locale.getDefault(), "%02d:%02d", var4, var2 % 60L) else String.format(Locale.getDefault(), "%02d:%02d:%02d", var6, var4, var2 % 60L)
+            return if (var6 == 0L) String.format(
+                Locale.getDefault(),
+                "%02d:%02d",
+                var4,
+                var2 % 60L
+            ) else String.format(Locale.getDefault(), "%02d:%02d:%02d", var6, var4, var2 % 60L)
         }
 
         fun getDateId(var0: Long): String? {
@@ -170,7 +180,11 @@ public class Utils {
         }
 
         fun userSort(userList: List<User>): List<User> {
-            Collections.sort(userList, Comparator<User?> { user: User?, user1: User? -> user!!.name.toLowerCase().compareTo(user1!!.name.toLowerCase()) })
+            Collections.sort(
+                userList,
+                Comparator<User?> { user: User?, user1: User? ->
+                    user!!.name.toLowerCase().compareTo(user1!!.name.toLowerCase())
+                })
             return userList
         }
 
@@ -203,32 +217,63 @@ public class Utils {
                     CometChatConstants.CATEGORY_MESSAGE ->
                         if (lastMessage is TextMessage) {
                             if (isLoggedInUser(lastMessage.getSender()))
-                                message = context.getString(R.string.you) + ": " + if (lastMessage.text == null) context.getString(R.string.this_message_deleted) else lastMessage.text
+                                message =
+                                    context.getString(R.string.you) + ": " + if (lastMessage.text == null) context.getString(R.string.this_message_deleted) else lastMessage.text
                             else
                                 message = lastMessage.getSender().name + ": " + lastMessage.text
 
                         } else if (lastMessage is MediaMessage) {
                             if (lastMessage.getDeletedAt() == 0L) {
-                                if (lastMessage.getType() == CometChatConstants.MESSAGE_TYPE_IMAGE) message = context.getString(R.string.message_image) else if (lastMessage.getType() == CometChatConstants.MESSAGE_TYPE_VIDEO) message = context.getString(R.string.message_video) else if (lastMessage.getType() == CometChatConstants.MESSAGE_TYPE_FILE) message = context.getString(R.string.message_file) else if (lastMessage.getType() == CometChatConstants.MESSAGE_TYPE_AUDIO) message = context.getString(R.string.message_audio)
+                                if (lastMessage.getType() == CometChatConstants.MESSAGE_TYPE_IMAGE) message =
+                                    context.getString(R.string.message_image) else if (lastMessage.getType() == CometChatConstants.MESSAGE_TYPE_VIDEO) message =
+                                    context.getString(R.string.message_video) else if (lastMessage.getType() == CometChatConstants.MESSAGE_TYPE_FILE) message =
+                                    context.getString(R.string.message_file) else if (lastMessage.getType() == CometChatConstants.MESSAGE_TYPE_AUDIO) message =
+                                    context.getString(R.string.message_audio)
                             } else message = context.getString(R.string.this_message_deleted)
                         }
                     CometChatConstants.CATEGORY_CUSTOM ->
                         message = if (lastMessage.deletedAt == 0L) {
-                            if (lastMessage.type == UIKitConstants.IntentStrings.LOCATION) context.getString(R.string.custom_message_location) else if (lastMessage.type == UIKitConstants.IntentStrings.POLLS) context.getString(R.string.custom_message_poll) else if (lastMessage.type.equals(UIKitConstants.IntentStrings.STICKERS, ignoreCase = true)) context.getString(R.string.custom_message_sticker) else if (lastMessage.type.equals(UIKitConstants.IntentStrings.WHITEBOARD, ignoreCase = true)) context.getString(R.string.custom_message_whiteboard) else if (lastMessage.type.equals(UIKitConstants.IntentStrings.WRITEBOARD, ignoreCase = true)) context.getString(R.string.custom_message_document) else if (lastMessage.type.equals(UIKitConstants.IntentStrings.MEETING, ignoreCase = true)) context.getString(R.string.custom_message_meeting) else String.format(context.getString(R.string.you_received), lastMessage.type)
+                            if (lastMessage.type == UIKitConstants.IntentStrings.LOCATION) context.getString(R.string.custom_message_location) else if (lastMessage.type == UIKitConstants.IntentStrings.POLLS) context.getString(
+                                R.string.custom_message_poll
+                            ) else if (lastMessage.type.equals(
+                                    UIKitConstants.IntentStrings.STICKERS,
+                                    ignoreCase = true
+                                )
+                            ) context.getString(R.string.custom_message_sticker) else if (lastMessage.type.equals(
+                                    UIKitConstants.IntentStrings.WHITEBOARD,
+                                    ignoreCase = true
+                                )
+                            ) context.getString(R.string.custom_message_whiteboard) else if (lastMessage.type.equals(
+                                    UIKitConstants.IntentStrings.WRITEBOARD,
+                                    ignoreCase = true
+                                )
+                            ) context.getString(R.string.custom_message_document) else if (lastMessage.type.equals(
+                                    UIKitConstants.IntentStrings.MEETING,
+                                    ignoreCase = true
+                                )
+                            ) context.getString(R.string.custom_message_meeting) else String.format(
+                                context.getString(R.string.you_received),
+                                lastMessage.type
+                            )
                         } else context.getString(R.string.this_message_deleted)
 //                    CometChatConstants.CATEGORY_ACTION -> message = (lastMessage as Action).message
                     CometChatConstants.CATEGORY_ACTION -> if (lastMessage is Action) {
                         if (lastMessage.action == CometChatConstants.ActionKeys.ACTION_JOINED)
                             message = (lastMessage.actioBy as User).name + " " + context.getString(R.string.joined)
-                        else if (lastMessage.action == CometChatConstants.ActionKeys.ACTION_MEMBER_ADDED) message = ((lastMessage.actioBy as User).name + " "
-                                + context.getString(R.string.added) + " " + (lastMessage.actionOn as User).name)
-                        else if (lastMessage.action == CometChatConstants.ActionKeys.ACTION_KICKED) message = ((lastMessage.actioBy as User).name + " "
-                                + context.getString(R.string.kicked_by) + " " + (lastMessage.actionOn as User).name)
-                        else if (lastMessage.action == CometChatConstants.ActionKeys.ACTION_BANNED) message = ((lastMessage.actioBy as User).name + " "
-                                + context.getString(R.string.ban) + " " + (lastMessage.actionOn as User).name)
-                        else if (lastMessage.action == CometChatConstants.ActionKeys.ACTION_UNBANNED) message = ((lastMessage.actioBy as User).name + " "
-                                + context.getString(R.string.unban) + " " + (lastMessage.actionOn as User).name)
-                        else if (lastMessage.action == CometChatConstants.ActionKeys.ACTION_LEFT) message = (lastMessage.actioBy as User).name + " " + context.getString(R.string.left)
+                        else if (lastMessage.action == CometChatConstants.ActionKeys.ACTION_MEMBER_ADDED) message =
+                            ((lastMessage.actioBy as User).name + " "
+                                    + context.getString(R.string.added) + " " + (lastMessage.actionOn as User).name)
+                        else if (lastMessage.action == CometChatConstants.ActionKeys.ACTION_KICKED) message =
+                            ((lastMessage.actioBy as User).name + " "
+                                    + context.getString(R.string.kicked_by) + " " + (lastMessage.actionOn as User).name)
+                        else if (lastMessage.action == CometChatConstants.ActionKeys.ACTION_BANNED) message =
+                            ((lastMessage.actioBy as User).name + " "
+                                    + context.getString(R.string.ban) + " " + (lastMessage.actionOn as User).name)
+                        else if (lastMessage.action == CometChatConstants.ActionKeys.ACTION_UNBANNED) message =
+                            ((lastMessage.actioBy as User).name + " "
+                                    + context.getString(R.string.unban) + " " + (lastMessage.actionOn as User).name)
+                        else if (lastMessage.action == CometChatConstants.ActionKeys.ACTION_LEFT) message =
+                            (lastMessage.actioBy as User).name + " " + context.getString(R.string.left)
                         else if (lastMessage.action == CometChatConstants.ActionKeys.ACTION_SCOPE_CHANGED)
                             message = if (lastMessage.newScope == CometChatConstants.SCOPE_MODERATOR) {
                                 ((lastMessage.actioBy as User).name + " " + context.getString(R.string.made) + " "
@@ -242,16 +287,25 @@ public class Utils {
                             } else lastMessage.message
                     }
                     CometChatConstants.CATEGORY_CALL ->
-                        message = if ((lastMessage as Call).callStatus.equals(CometChatConstants.CALL_STATUS_ENDED, ignoreCase = true) ||
-                        lastMessage.callStatus.equals(CometChatConstants.CALL_STATUS_CANCELLED, ignoreCase = true)) {
-                            if (lastMessage.getType().equals(CometChatConstants.CALL_TYPE_AUDIO, ignoreCase = true)) context.getString(R.string.incoming_audio_call) else context.getString(R.string.incoming_video_call)
-                            } else if (lastMessage.callStatus.equals(CometChatConstants.CALL_STATUS_ONGOING, ignoreCase = true)) {
-                                context.getString(R.string.ongoing_call)
-                            } else if (lastMessage.callStatus.equals(CometChatConstants.CALL_STATUS_CANCELLED, ignoreCase = true) ||
-                                    lastMessage.callStatus.equals(CometChatConstants.CALL_STATUS_UNANSWERED, ignoreCase = true) ||
-                                    lastMessage.callStatus.equals(CometChatConstants.CALL_STATUS_BUSY, ignoreCase = true)) {
-                                if (lastMessage.getType().equals(CometChatConstants.CALL_TYPE_AUDIO, ignoreCase = true)) context.getString(R.string.missed_voice_call) else context.getString(R.string.missed_video_call)
-                            } else lastMessage.callStatus + " " + lastMessage.getType() + " Call"
+                        message = if ((lastMessage as Call).callStatus.equals(
+                                CometChatConstants.CALL_STATUS_ENDED,
+                                ignoreCase = true
+                            ) ||
+                            lastMessage.callStatus.equals(CometChatConstants.CALL_STATUS_CANCELLED, ignoreCase = true)
+                        ) {
+                            if (lastMessage.getType()
+                                    .equals(CometChatConstants.CALL_TYPE_AUDIO, ignoreCase = true)
+                            ) context.getString(R.string.incoming_audio_call) else context.getString(R.string.incoming_video_call)
+                        } else if (lastMessage.callStatus.equals(CometChatConstants.CALL_STATUS_ONGOING, ignoreCase = true)) {
+                            context.getString(R.string.ongoing_call)
+                        } else if (lastMessage.callStatus.equals(CometChatConstants.CALL_STATUS_CANCELLED, ignoreCase = true) ||
+                            lastMessage.callStatus.equals(CometChatConstants.CALL_STATUS_UNANSWERED, ignoreCase = true) ||
+                            lastMessage.callStatus.equals(CometChatConstants.CALL_STATUS_BUSY, ignoreCase = true)
+                        ) {
+                            if (lastMessage.getType()
+                                    .equals(CometChatConstants.CALL_TYPE_AUDIO, ignoreCase = true)
+                            ) context.getString(R.string.missed_voice_call) else context.getString(R.string.missed_video_call)
+                        } else lastMessage.callStatus + " " + lastMessage.getType() + " Call"
                     else -> message = context.getString(R.string.tap_to_start_conversation)
                 }
                 return message
@@ -276,7 +330,10 @@ public class Utils {
          */
         fun UserToGroupMember(user: User, isScopeUpdate: Boolean, newScope: String?): GroupMember? {
             val groupMember: GroupMember
-            groupMember = if (isScopeUpdate) GroupMember(user.uid, newScope) else GroupMember(user.uid, CometChatConstants.SCOPE_PARTICIPANT)
+            groupMember = if (isScopeUpdate) GroupMember(user.uid, newScope) else GroupMember(
+                user.uid,
+                CometChatConstants.SCOPE_PARTICIPANT
+            )
             groupMember.avatar = user.avatar
             groupMember.name = user.name
             groupMember.status = user.status
@@ -346,8 +403,10 @@ public class Utils {
         }
 
         fun checkDirExistence(context: Context, type: String): Boolean? {
-            val audioDir = File(Environment.getExternalStorageDirectory().toString() + "/" +
-                    context.resources.getString(R.string.app_name) + "/" + type + "/")
+            val audioDir = File(
+                Environment.getExternalStorageDirectory().toString() + "/" +
+                        context.resources.getString(R.string.app_name) + "/" + type + "/"
+            )
             return audioDir.isDirectory
         }
 
@@ -360,10 +419,13 @@ public class Utils {
         fun hasPermissions(context: Context?, vararg permissions: String): Boolean {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
                 for (permission in permissions) {
-                    Logger.error(TAG, " hasPermissions() : Permission : " + permission
-                            + "checkSelfPermission : " + ActivityCompat.checkSelfPermission(context, permission))
+                    Logger.error(
+                        TAG, " hasPermissions() : Permission : " + permission
+                                + "checkSelfPermission : " + ActivityCompat.checkSelfPermission(context, permission)
+                    )
                     if (ActivityCompat.checkSelfPermission(context, permission) !=
-                            PackageManager.PERMISSION_GRANTED) {
+                        PackageManager.PERMISSION_GRANTED
+                    ) {
                         return false
                     }
                 }
@@ -395,16 +457,20 @@ public class Utils {
             return "com.android.providers.media.documents" == uri.authority
         }
 
-        fun getDataColumn(context: Context, uri: Uri?, selection: String?,
-                          selectionArgs: Array<String?>?): String? {
+        fun getDataColumn(
+            context: Context, uri: Uri?, selection: String?,
+            selectionArgs: Array<String?>?
+        ): String? {
             var cursor: Cursor? = null
             val column = MediaStore.Files.FileColumns.DATA
             val projection = arrayOf(
-                    column
+                column
             )
             try {
-                cursor = context.contentResolver.query(uri!!, projection, selection, selectionArgs,
-                        null)
+                cursor = context.contentResolver.query(
+                    uri!!, projection, selection, selectionArgs,
+                    null
+                )
                 if (cursor != null && cursor.moveToFirst()) {
                     val column_index = cursor.getColumnIndexOrThrow(column)
                     return cursor.getString(column_index)
@@ -430,8 +496,8 @@ public class Utils {
                         return id.substring(4)
                     }
                     val contentUriPrefixesToTry = arrayOf(
-                            "content://downloads/public_downloads",
-                            "content://downloads/my_downloads"
+                        "content://downloads/public_downloads",
+                        "content://downloads/my_downloads"
                     )
                     for (contentUriPrefix in contentUriPrefixesToTry) {
                         val contentUri = ContentUris.withAppendedId(Uri.parse(contentUriPrefix), java.lang.Long.valueOf(id!!))
@@ -455,8 +521,10 @@ public class Utils {
                     }
                     imagePath = destinationPath
                 } else if ("com.android.providers.downloads.documents" == aUri.authority) {
-                    val contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"),
-                            java.lang.Long.valueOf(documentId))
+                    val contentUri = ContentUris.withAppendedId(
+                        Uri.parse("content://downloads/public_downloads"),
+                        java.lang.Long.valueOf(documentId)
+                    )
                     imagePath = getImagePath(contentUri, null!!, context!!)
                 }
             } else if ("content".equals(aUri.scheme, ignoreCase = true)) {
@@ -563,8 +631,10 @@ public class Utils {
                     file.name
                 }
             } else {
-                val returnCursor = context?.contentResolver?.query(uri, null,
-                        null, null, null)
+                val returnCursor = context?.contentResolver?.query(
+                    uri, null,
+                    null, null, null
+                )
                 if (returnCursor != null) {
                     val nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
                     returnCursor.moveToFirst()
@@ -597,7 +667,8 @@ public class Utils {
             return if (!var0.exists() && !var0.mkdirs()) {
                 null
             } else {
-                val var1 = (Environment.getExternalStorageDirectory().toString() + "/" + context.resources.getString(R.string.app_name) + "/"
+                val var1 = (Environment.getExternalStorageDirectory()
+                    .toString() + "/" + context.resources.getString(R.string.app_name) + "/"
                         + "audio/")
                 createDirectory(var1)
                 var1 + SimpleDateFormat("yyyyMMddHHmmss").format(Date()) + ".mp3"
@@ -663,8 +734,10 @@ public class Utils {
 //            return null
 //        }
 
-        fun startCallIntent(context: Context, user: User, type: String?,
-                            isOutgoing: Boolean, sessionId: String) {
+        fun startCallIntent(
+            context: Context, user: User, type: String?,
+            isOutgoing: Boolean, sessionId: String
+        ) {
             val videoCallIntent = Intent(context, CometChatCallActivity::class.java)
             videoCallIntent.putExtra(UIKitConstants.IntentStrings.NAME, user.name)
             videoCallIntent.putExtra(UIKitConstants.IntentStrings.UID, user.uid)
@@ -677,11 +750,34 @@ public class Utils {
             } else {
                 videoCallIntent.type = "incoming"
             }
-            context.startActivity(videoCallIntent)
+            /* Edited By CryptoDev: so just one call appears at a time in other words don't show call activity if there is
+               already a call */
+            val callActivityName = "com.cometchat.pro.uikit.ui_components.calls.call_manager.CometChatCallActivity"
+            val topRunningActivity = getCurrentRunningActivity(context)
+            if (topRunningActivity.isNullOrEmpty()) {
+                context.startActivity(videoCallIntent)
+            } else {
+                if (topRunningActivity != callActivityName) {
+                    context.startActivity(videoCallIntent)
+                }
+            }
         }
 
-        fun startGroupCallIntent(context: Context, group: Group, type: String?,
-                                 isOutgoing: Boolean, sessionId: String) {
+        private fun getCurrentRunningActivity(context: Context): String? {
+            val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            val appRunningTasks = activityManager.appTasks
+            appRunningTasks?.also {
+                if (it.size > 0) {
+                    return it[0].taskInfo.topActivity?.className
+                }
+            }
+            return null
+        }
+
+        fun startGroupCallIntent(
+            context: Context, group: Group, type: String?,
+            isOutgoing: Boolean, sessionId: String
+        ) {
             val videoCallIntent = Intent(context, CometChatCallActivity::class.java)
             videoCallIntent.putExtra(UIKitConstants.IntentStrings.NAME, group.name)
             videoCallIntent.putExtra(UIKitConstants.IntentStrings.UID, group.guid)
@@ -754,20 +850,28 @@ public class Utils {
                     callIntent.action = call.type
                     callIntent.type = "incoming"
                     val builder = NotificationCompat.Builder(context, "2")
-                            .setSmallIcon(R.drawable.cc)
-                            .setContentTitle(receiverName)
-                            .setContentText(callType)
-                            .setPriority(Notification.PRIORITY_HIGH)
-                            .setChannelId("2")
-                            .setColor(context.resources.getColor(R.color.colorPrimary))
-                            .setLargeIcon(getBitmapFromURL(receiverAvatar))
-                            .setGroup(GROUP_ID)
-                            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                        .setSmallIcon(R.drawable.cc)
+                        .setContentTitle(receiverName)
+                        .setContentText(callType)
+                        .setPriority(Notification.PRIORITY_HIGH)
+                        .setChannelId("2")
+                        .setColor(context.resources.getColor(R.color.colorPrimary))
+                        .setLargeIcon(getBitmapFromURL(receiverAvatar))
+                        .setGroup(GROUP_ID)
+                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                     val notificationManager = NotificationManagerCompat.from(context)
                     builder.setGroup(GROUP_ID + "Call")
                     builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE))
-                    builder.addAction(0, "Answers", PendingIntent.getBroadcast(context, REQUEST_CODE, callIntent, PendingIntent.FLAG_UPDATE_CURRENT))
-                    builder.addAction(0, "Decline", PendingIntent.getBroadcast(context, 1, callIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+                    builder.addAction(
+                        0,
+                        "Answers",
+                        PendingIntent.getBroadcast(context, REQUEST_CODE, callIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    )
+                    builder.addAction(
+                        0,
+                        "Decline",
+                        PendingIntent.getBroadcast(context, 1, callIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    )
                     notificationManager.notify(5, builder.build())
                 }.start()
             } catch (e: java.lang.Exception) {
@@ -777,10 +881,10 @@ public class Utils {
 
         fun startCall(activity: Activity, call: Call, mainView: RelativeLayout?) {
             val callSettings = CallSettings.CallSettingsBuilder(activity, mainView)
-                    .setSessionId(call.sessionId)
-                    .startWithAudioMuted(true)
-                    .startWithVideoMuted(true)
-                    .build()
+                .setSessionId(call.sessionId)
+                .startWithAudioMuted(true)
+                .startWithVideoMuted(true)
+                .build()
             CometChat.startCall(callSettings, object : OngoingCallListener {
                 override fun onUserJoined(user: User) {
                     Log.e("onUserJoined: ", user.uid)
@@ -806,7 +910,7 @@ public class Utils {
                 }
 
                 override fun onAudioModesUpdated(p0: MutableList<AudioMode>?) {
-                    Log.e(TAG, "onAudioModesUpdated: "+p0.toString())
+                    Log.e(TAG, "onAudioModesUpdated: " + p0.toString())
                 }
 
             })
@@ -858,11 +962,12 @@ public class Utils {
             val imageDialog = Dialog(context)
             val messageVw = LayoutInflater.from(context).inflate(R.layout.image_dialog_view, null)
             val imageView: ZoomImageView = messageVw.findViewById(R.id.imageView)
-            Glide.with(context).asBitmap().load((baseMessage as MediaMessage).attachment.fileUrl).into(object : SimpleTarget<Bitmap?>() {
-                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap?>?) {
-                    imageView.setImageBitmap(resource)
-                }
-            })
+            Glide.with(context).asBitmap().load((baseMessage as MediaMessage).attachment.fileUrl)
+                .into(object : SimpleTarget<Bitmap?>() {
+                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap?>?) {
+                        imageView.setImageBitmap(resource)
+                    }
+                })
             imageDialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             imageDialog.setContentView(messageVw)
             imageDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -895,8 +1000,8 @@ public class Utils {
         }
 
 
-         fun showPermissionAlert(
-             context: Context,
+        fun showPermissionAlert(
+            context: Context,
             title: String,
             message: String,
             ok: String,

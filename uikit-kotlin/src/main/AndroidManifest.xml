@@ -6,9 +6,9 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
@@ -25,10 +25,13 @@
         <activity android:name=".ui_components.messages.extensions.message_reaction.CometChatReactionInfoActivity" />
         <activity android:name=".ui_components.messages.message_information.CometChatMessageInfoScreenActivity" />
         <activity android:name=".ui_components.groups.banned_members.CometChatBanMembersActivity" />
+        <!-- Edited By CryptoDev: Added android:showWhenLocked="true" And android:turnScreenOn="true" To Turn Screen On , On Incoming Calls-->
         <activity
             android:name=".ui_components.calls.call_manager.CometChatCallActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/TransparentCompat" />
+            android:showWhenLocked="true"
+            android:theme="@style/TransparentCompat"
+            android:turnScreenOn="true" />
         <activity
             android:name=".ui_components.messages.threaded_message_list.CometChatThreadMessageListActivity"
             android:windowSoftInputMode="adjustResize" />
@@ -61,8 +64,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui_components.messages.forward_message.CometChatForwardMessageActivity"
-            android:screenOrientation="portrait"
-            android:exported="false">
+            android:exported="false"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
 
