@@ -373,6 +373,10 @@
     <string name="camera_permission_denied">Please allow access to camera to use camera feature</string>
     <string name="allow">Allow</string>
     <string name="setting">Setting</string>
+    <!--    Edited By CryptoDev: Additional Strings -->
+    <string name="user_is_busy_right_now">%s is busy right now</string>
+    <!--    Edited By CryptoDev: Additional Strings -->
+    <string name="user_tried_to_call_you">%s tried to call you</string>
 
     <!--    ______________-->
 </resources>

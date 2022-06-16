@@ -1,6 +1,8 @@
 package com.cometchat.pro.uikit.ui_components.calls.call_manager.listener
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import com.cometchat.pro.constants.CometChatConstants
 import com.cometchat.pro.core.Call
@@ -9,6 +11,7 @@ import com.cometchat.pro.core.CometChat.CallbackListener
 import com.cometchat.pro.exceptions.CometChatException
 import com.cometchat.pro.models.Group
 import com.cometchat.pro.models.User
+import com.cometchat.pro.uikit.R
 import com.cometchat.pro.uikit.ui_components.calls.call_manager.CometChatCallActivity
 import com.cometchat.pro.uikit.ui_resources.utils.ErrorMessagesUtils
 import com.cometchat.pro.uikit.ui_resources.utils.Utils
@@ -18,6 +21,9 @@ import com.cometchat.pro.uikit.ui_resources.utils.Utils
  * It also has method to make call to user passed in parameter;
  */
 object CometChatCallListener {
+    //Edited By CryptoDev: reject call delay time
+    const val REJECT_CALL_DELAY = 1000L
+
     /**
      * This method is used to add CallListener in app
      * @param TAG is a unique Identifier
@@ -28,25 +34,42 @@ object CometChatCallListener {
             override fun onIncomingCallReceived(call: Call) {
                 if (CometChat.getActiveCall() == null) {
                     if (call.receiverType == CometChatConstants.RECEIVER_TYPE_USER) {
-                        Utils.startCallIntent(context!!, call.callInitiator as User, call.type,
-                                false, call.sessionId)
+                        Utils.startCallIntent(
+                            context!!, call.callInitiator as User, call.type,
+                            false, call.sessionId
+                        )
                     } else {
-                        Utils.startGroupCallIntent(context!!, call.receiver as Group, call.type,
-                                false, call.sessionId)
+                        Utils.startGroupCallIntent(
+                            context!!, call.receiver as Group, call.type,
+                            false, call.sessionId
+                        )
                     }
                 } else {
-                    CometChat.rejectCall(call.sessionId, CometChatConstants.CALL_STATUS_BUSY, object : CallbackListener<Call?>() {
-                        override fun onSuccess(call: Call?) {
-                            Toast.makeText(context, call?.sender?.name + " tried to call you", Toast.LENGTH_LONG).show()
-                        }
+                    //Edited By CryptoDev: reject call after amount of time so that the caller user can handle rejection
+                    Looper.myLooper()?.also {
+                        Handler(it).postDelayed({
+                            CometChat.rejectCall(
+                                call.sessionId,
+                                CometChatConstants.CALL_STATUS_BUSY,
+                                object : CallbackListener<Call?>() {
+                                    override fun onSuccess(call: Call?) {
+                                        Toast.makeText(
+                                            context,
+                                            context?.getString(R.string.user_tried_to_call_you, (call?.receiver as? User)?.name),
+                                            Toast.LENGTH_LONG
+                                        )
+                                            .show()
+                                    }
 
-                        override fun onError(e: CometChatException) {
+                                    override fun onError(e: CometChatException) {
 //                            Toast.makeText(context, "Error:" + e.message, Toast.LENGTH_LONG).show()
-                            if (context != null) {
-                                ErrorMessagesUtils.cometChatErrorMessage(context, e.code)
-                            }
-                        }
-                    })
+                                        if (context != null) {
+                                            ErrorMessagesUtils.cometChatErrorMessage(context, e.code)
+                                        }
+                                    }
+                                })
+                        }, REJECT_CALL_DELAY)
+                    }
                 }
             }
 
@@ -58,7 +81,22 @@ object CometChatCallListener {
             }
 
             override fun onOutgoingCallRejected(call: Call) {
-                if (CometChatCallActivity.callActivity != null) CometChatCallActivity.callActivity!!.finish()
+                //Edited By CryptoDev: Show Toast To User If The rejected call status is busy
+                call.callStatus?.also {
+                    context?.also { context ->
+                        if (it == CometChatConstants.CALL_STATUS_BUSY)
+                            Toast.makeText(
+                                context,
+                                context.getString(
+                                    R.string.user_is_busy_right_now,
+                                    call.sender.name
+                                ),
+                                Toast.LENGTH_LONG
+                            ).show()
+                    }
+                }
+                if (CometChatCallActivity.callActivity != null)
+                    CometChatCallActivity.callActivity!!.finish()
             }
 
             override fun onIncomingCallCancelled(call: Call) {

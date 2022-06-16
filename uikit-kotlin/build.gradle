@@ -19,6 +19,7 @@ android {
         ndk {
             abiFilters "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
         }
+        resConfigs "en", "ar" //Edited By CryptoDev: support English And Arabic to Remove unused alternative resources
     }
 
     dataBinding {

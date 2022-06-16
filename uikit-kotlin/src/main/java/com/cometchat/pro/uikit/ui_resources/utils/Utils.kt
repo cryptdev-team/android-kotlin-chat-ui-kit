@@ -21,6 +21,8 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.OpenableColumns
@@ -31,10 +33,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -59,6 +58,7 @@ import com.cometchat.pro.models.AudioMode
 import com.cometchat.pro.uikit.R
 import com.cometchat.pro.uikit.ui_components.calls.call_manager.CometChatCallActivity
 import com.cometchat.pro.uikit.ui_components.calls.call_manager.CometChatStartCallActivity
+import com.cometchat.pro.uikit.ui_components.calls.call_manager.listener.CometChatCallListener
 import com.cometchat.pro.uikit.ui_resources.constants.UIKitConstants
 import com.cometchat.pro.uikit.ui_resources.utils.zoom_imageView.ZoomImageView
 import com.google.android.material.appbar.MaterialToolbar
@@ -738,6 +738,37 @@ public class Utils {
             context: Context, user: User, type: String?,
             isOutgoing: Boolean, sessionId: String
         ) {
+            /* Edited By CryptoDev: so just one call appears at a time in other words don't show call activity if there is
+               already a call and reject the incoming call after 1500ms so that the other device can handle the rejection */
+            val callActivityName = "com.cometchat.pro.uikit.ui_components.calls.call_manager.CometChatCallActivity"
+            val topRunningActivity = getCurrentRunningActivity(context)
+            if (topRunningActivity == callActivityName) {
+                Looper.myLooper()?.also {
+                    Handler(it).postDelayed(
+                        {
+                            CometChat.rejectCall(
+                                sessionId,
+                                CometChatConstants.CALL_STATUS_BUSY,
+                                object : CallbackListener<Call?>() {
+                                    override fun onSuccess(call: Call?) {
+                                        Toast.makeText(
+                                            context,
+                                            context.getString(R.string.user_tried_to_call_you, (call?.receiver as? User)?.name),
+                                            Toast.LENGTH_LONG
+                                        )
+                                            .show()
+                                    }
+
+                                    override fun onError(e: CometChatException) {
+                                        ErrorMessagesUtils.cometChatErrorMessage(context, e.code)
+                                    }
+                                })
+                        }, CometChatCallListener.REJECT_CALL_DELAY
+                    )
+                }
+                return
+            }
+
             val videoCallIntent = Intent(context, CometChatCallActivity::class.java)
             videoCallIntent.putExtra(UIKitConstants.IntentStrings.NAME, user.name)
             videoCallIntent.putExtra(UIKitConstants.IntentStrings.UID, user.uid)
@@ -750,17 +781,7 @@ public class Utils {
             } else {
                 videoCallIntent.type = "incoming"
             }
-            /* Edited By CryptoDev: so just one call appears at a time in other words don't show call activity if there is
-               already a call */
-            val callActivityName = "com.cometchat.pro.uikit.ui_components.calls.call_manager.CometChatCallActivity"
-            val topRunningActivity = getCurrentRunningActivity(context)
-            if (topRunningActivity.isNullOrEmpty()) {
-                context.startActivity(videoCallIntent)
-            } else {
-                if (topRunningActivity != callActivityName) {
-                    context.startActivity(videoCallIntent)
-                }
-            }
+            context.startActivity(videoCallIntent)
         }
 
         private fun getCurrentRunningActivity(context: Context): String? {
