@@ -7,11 +7,15 @@
             name="textMessage"
             type="com.cometchat.pro.models.TextMessage"/>
     </data>
+<!--    Edited By CryptoDev: Adding padding to root view cuz it
+ doesn't work will in rtl directions -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="end"
+        android:paddingEnd="10dp"
+        android:paddingStart="0dp"
         android:animateLayoutChanges="true">
 
         <RelativeLayout
@@ -19,15 +23,17 @@
             android:animateLayoutChanges="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-            <RelativeLayout
+            <!--Edited By CryptoDev: Replaced RelativeLayout With ConstraintLayout
+            so that message text appears correctly-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
                 android:id="@+id/cv_message_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginEnd="10dp"
                 android:background="@drawable/cc_message_bubble_right">
-
+                <!--Edited By CryptoDev: Added required constrains-->
                 <include
                     android:id="@+id/replyItem"
                     android:layout_marginLeft="8dp"
@@ -35,13 +41,15 @@
                     android:layout_marginTop="8dp"
                     layout="@layout/message_right_reply_item"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+                <!--Edited By CryptoDev: Added required constrains-->
                 <TextView
                     android:id="@+id/go_txt_message"
                     android:layout_width="wrap_content"
                     tools:text="message"
-                    android:layout_below="@+id/replyItem"
                     android:textColor="@color/textColorWhite"
                     android:focusable="true"
                     android:padding="10dp"
@@ -50,8 +58,12 @@
                     android:maxWidth="250dp"
                     android:focusableInTouchMode="true"
                     style="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
-                    android:layout_height="wrap_content" />
-            </RelativeLayout>
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/replyItem"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
             <HorizontalScrollView
                 android:layout_alignEnd="@+id/cv_message_container"
                 android:layout_below="@+id/cv_message_container"

@@ -5,6 +5,8 @@
             name="mediaMessage"
             type="com.cometchat.pro.models.MediaMessage"/>
     </data>
+    <!--    Edited By CryptoDev: Adding padding to root view cuz it
+ doesn't work will in rtl directions -->
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -12,7 +14,9 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:orientation="vertical"
         android:gravity="end"
-        android:animateLayoutChanges="true">
+        android:animateLayoutChanges="true"
+        android:paddingEnd="10dp"
+        android:paddingStart="0dp">
 
         <RelativeLayout
             android:id="@+id/rl_message"
@@ -25,7 +29,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
                 android:padding="8dp"
                 android:background="@drawable/cc_message_bubble_right">
                 <TextView
