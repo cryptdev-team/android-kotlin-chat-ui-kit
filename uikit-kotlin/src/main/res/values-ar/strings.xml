@@ -377,4 +377,10 @@
     <string name="user_is_busy_right_now">%s مشغول في الوقت الحالي</string>
     <!--    Edited By CryptoDev: Additional Strings -->
     <string name="user_tried_to_call_you">%s حاول الاتصال بك</string>
+    <!--    Edited By CryptoDev: Additional Strings -->
+    <string name="manage_files">إدارة الملفات</string>
+    <!--    Edited By CryptoDev: Additional Strings -->
+    <string name="allow_manage_files">السماح للتطبيق بإدارة الملفات حتى تتمكن من تسجيل الصوتيات</string>
+    <!--    Edited By CryptoDev: Additional Strings -->
+    <string name="accessing_files_permission_denied">تم رفض إذن الوصول إلى الملفات</string>
 </resources>
