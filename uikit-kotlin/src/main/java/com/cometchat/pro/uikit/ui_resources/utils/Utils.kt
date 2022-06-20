@@ -5,7 +5,6 @@ import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Configuration
 import android.content.res.Resources
 import android.database.Cursor
 import android.graphics.Bitmap
@@ -30,11 +29,9 @@ import android.text.format.DateFormat
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.*
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -54,7 +51,6 @@ import com.cometchat.pro.core.CometChat.OngoingCallListener
 import com.cometchat.pro.exceptions.CometChatException
 import com.cometchat.pro.helpers.Logger
 import com.cometchat.pro.models.*
-import com.cometchat.pro.models.AudioMode
 import com.cometchat.pro.uikit.R
 import com.cometchat.pro.uikit.ui_components.calls.call_manager.CometChatCallActivity
 import com.cometchat.pro.uikit.ui_components.calls.call_manager.CometChatStartCallActivity
@@ -663,11 +659,11 @@ public class Utils {
         }
 
         fun getOutputMediaFile(context: Context): String? {
-            val var0 = File(Environment.getExternalStorageDirectory(), context.resources.getString(R.string.app_name))
-            return if (!var0.exists() && !var0.mkdirs()) {
+            val var0 = context.cacheDir
+            return if (!var0.exists()) {
                 null
             } else {
-                val var1 = (Environment.getExternalStorageDirectory()
+                val var1 = (context.cacheDir
                     .toString() + "/" + context.resources.getString(R.string.app_name) + "/"
                         + "audio/")
                 createDirectory(var1)

@@ -377,12 +377,5 @@
     <string name="user_is_busy_right_now">%s is busy right now</string>
     <!--    Edited By CryptoDev: Additional Strings -->
     <string name="user_tried_to_call_you">%s tried to call you</string>
-    <!--    Edited By CryptoDev: Additional Strings -->
-    <string name="manage_files">Manage Files</string>
-    <!--    Edited By CryptoDev: Additional Strings -->
-    <string name="allow_manage_files">Allow app to manage files so you can record audios</string>
-    <!--    Edited By CryptoDev: Additional Strings -->
-    <string name="accessing_files_permission_denied">Accessing files permission denied</string>
-
     <!--    ______________-->
 </resources>

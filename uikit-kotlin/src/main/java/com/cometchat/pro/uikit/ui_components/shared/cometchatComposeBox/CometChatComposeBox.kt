@@ -38,7 +38,6 @@ import com.cometchat.pro.uikit.ui_resources.utils.Utils
 import com.cometchat.pro.uikit.ui_resources.utils.audio_visualizer.AudioRecordView
 import com.cometchat.pro.uikit.ui_settings.FeatureRestriction
 import com.cometchat.pro.uikit.ui_settings.UIKitSettings
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -460,24 +459,7 @@ class CometChatComposeBox : RelativeLayout, View.OnClickListener {
 //                rlActionContainer!!.visibility = View.GONE
 //            }
 //            Edited By CryptoDev: Handling Storage Permission For Android 12+
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.R && Environment.isExternalStorageManager().not()) {
-                MaterialAlertDialogBuilder(context)
-                    .setTitle(context.getString(R.string.manage_files))
-                    .setMessage(context.getString(R.string.allow_manage_files))
-                    .setPositiveButton(android.R.string.ok) { _, _ ->
-                        val uri = Uri.parse("package:${context.packageName}")
-                        context.startActivity(Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri))
-                    }.setNegativeButton(android.R.string.cancel) { dialog, _ ->
-                        dialog.dismiss()
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.accessing_files_permission_denied),
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }.create()
-                    .show()
-                return
-            } else if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R && Utils.hasPermissions(
+            if (Utils.hasPermissions(
                     context,
                     *arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 ).not()
@@ -609,11 +591,10 @@ class CometChatComposeBox : RelativeLayout, View.OnClickListener {
                 timerRunnable = null
             }
             mediaPlayer!!.reset()
-            if (SDK_INT <= Build.VERSION_CODES.R && Utils.hasPermissions(
+            if (Utils.hasPermissions(
                     context,
                     *arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 )
-                || SDK_INT > Build.VERSION_CODES.R && Environment.isExternalStorageManager()
             ) {
                 mediaPlayer!!.setDataSource(path)
                 mediaPlayer!!.prepare()
