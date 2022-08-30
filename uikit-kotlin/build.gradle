@@ -8,8 +8,6 @@ android {
     defaultConfig {
         minSdkVersion 24
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         renderscriptSupportModeEnabled true
@@ -19,7 +17,8 @@ android {
         ndk {
             abiFilters "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
         }
-        resConfigs "en", "ar" //Edited By CryptoDev: support English And Arabic to Remove unused alternative resources
+        resConfigs 'en', 'ar'
+//Edited By CryptoDev: support English And Arabic to Remove unused alternative resources
     }
 
     dataBinding {
@@ -37,7 +36,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    buildToolsVersion = '28.0.3'
     sourceSets {
         main {
             res {
