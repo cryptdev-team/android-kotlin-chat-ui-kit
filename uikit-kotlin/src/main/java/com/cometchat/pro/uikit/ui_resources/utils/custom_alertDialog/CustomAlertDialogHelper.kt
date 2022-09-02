@@ -25,7 +25,6 @@ class CustomAlertDialogHelper(context: Context, title: String, private val view:
         // context_menu.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         val builder = AlertDialog.Builder(context)
 
-        //todo get color from cc Sdk
 //		cometChat = cc.getInstance(context_menu);
         colorPrimary = context.resources.getColor(R.color.colorPrimaryDark)
         //		colorPrimary = (int) cometChat.getCCSetting(new CCSettingMapper(SettingType.UI_SETTINGS, SettingSubType.COLOR_PRIMARY));
